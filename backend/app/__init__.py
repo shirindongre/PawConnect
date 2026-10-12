@@ -30,6 +30,25 @@ def create_app(config_class=Config):
         )
 
     db.init_app(app)
+    # Enable foreign key constraints for SQLite and auto‑seed default roles
+    from sqlalchemy import event
+    from sqlalchemy.engine import Engine
+
+    @event.listens_for(Engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
+    if app.config.get('SQLALCHEMY_DATABASE_URI', '').startswith('sqlite'):
+        with app.app_context():
+            db.create_all()
+            # Seed default roles if they don't exist
+            from .models.role import Role, RoleName
+            if not Role.query.first():
+                for role_name in RoleName.ALL_ROLES:
+                    db.session.add(Role(role_name=role_name))
+                db.session.commit()
     migrate.init_app(app, db, directory=str(BACKEND_DIR / "migrations"))
 
     # Register models with SQLAlchemy metadata
@@ -43,6 +62,9 @@ def create_app(config_class=Config):
         Donation,
         VolunteerApplication,
     )
+
+    from .routes import api_bp
+    app.register_blueprint(api_bp)
 
     @app.get("/api/health")
     def health_check():

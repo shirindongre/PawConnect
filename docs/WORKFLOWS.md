@@ -106,7 +106,11 @@ Adoption Available
    ↓
 Adopted / Resolved
 
-Only authorized users should be able to change case status.
+Authorization & Endpoints:
+- Case reported via `POST /api/rescue-cases` (any authenticated user; status begins as 'Reported').
+- Case reviewed and assigned to NGO via `POST /api/rescue-cases/<id>/assign` (NGO role).
+- Case status transitions updated via `PATCH /api/rescue-cases/<id>/status` (Assigned NGO / Rescuer only).
+- Non-authorized users cannot modify status or assign cases.
 
 7. Adoption Workflow
 User

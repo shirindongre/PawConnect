@@ -34,6 +34,10 @@ Completed:
 ✓ Migration 03cdf4bc96d9 (adoption_applications, donations, volunteer_applications tables, constraints, indexes)
 ✓ Local database migration applied (03cdf4bc96d9)
 ✓ 21 Batch 2 model tests pass (72 total tests pass)
+✓ API contract finalized (docs/API.md) — approved design decisions incorporated (public visibility, NGO creation, animal creation/hard deletion, DB & API-level text limits, canonical enums); no unresolved issues for Batch 1; no code changes
+✓ REST API Batch 1 implemented (User profile, NGO profile, Animal listing)
+✓ 26 Batch 1 REST API tests pass (98 total tests pass)
+✓ REST API Batch 2A (Rescue Cases) contract design drafted (docs/API.md, docs/WORKFLOWS.md) — under review; no code changes
 
 Current database:
 
@@ -52,7 +56,7 @@ Active migration head: 03cdf4bc96d9
 
 Next:
 
-→ REST APIs (Authentication, User profile, NGO, Animal listing, Rescue case, Adoption, Donation, Volunteer)
+→ REST APIs Batch 2 (Rescue cases, Adoption applications, Donations, Volunteer applications)
 → Frontend
 → S3
 → AWS deployment
