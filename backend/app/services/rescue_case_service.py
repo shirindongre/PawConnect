@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional, Tuple, List
 from flask import g
 from ..extensions import db
 from ..models.rescue_case import RescueCase
+from ..models.role import RoleName
 from ..utils.validation import (
     RESCUE_MUTABLE_FIELDS,
     RESCUE_PROTECTED_FIELDS,
@@ -177,6 +178,7 @@ class RescueCaseService:
             return None, {"status": "error", "message": "At least one mutable field is required."}, 400
 
         user = g.current_user
+        db.session.refresh(case)
         role = user.role.role_name if user.role else None
         # Authorization checks
         if case.reported_by == user.user_id and case.status == "Reported":
@@ -262,7 +264,14 @@ class RescueCaseService:
             return None, {"status": "error", "message": f"Status must be one of: {', '.join(sorted(VALID_RESCUE_STATUSES))}."}, 400
 
         user = g.current_user
-        if not getattr(user, "ngo", None) or case.assigned_ngo != user.ngo.ngo_id:
+        role_name = user.role.role_name if user.role else None
+        # Reporter can change status of their own case
+        if role_name == RoleName.USER and case.reported_by == user.user_id:
+            pass
+        # NGO can change status only for cases assigned to their NGO
+        elif role_name == RoleName.NGO and getattr(user, "ngo", None) and case.assigned_ngo == user.ngo.ngo_id:
+            pass
+        else:
             return None, {"status": "error", "message": "You do not have permission to modify status for this rescue case."}, 403
 
         # Transition table – hard coded according to docs/API.md §5.4

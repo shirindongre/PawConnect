@@ -9,9 +9,10 @@ from ..services.rescue_case_service import RescueCaseService
 from ..utils.auth_decorators import cognito_required, roles_required
 
 rescue_bp = Blueprint("rescue_cases", __name__, url_prefix="/rescue-cases")
+rescue_bp.strict_slashes = False
 
 # 1. POST /api/rescue-cases
-@rescue_bp.route("", methods=["POST"])
+@rescue_bp.route("/", methods=["POST"], strict_slashes=False)
 @cognito_required(require_pawconnect_user=True)
 def create_rescue_case():
     payload = request.get_json(silent=True)
@@ -95,7 +96,7 @@ def assign_rescue_case(case_id: int):
 
 # 6. PATCH /api/rescue-cases/<int:case_id>/status
 @rescue_bp.route("/<int:case_id>/status", methods=["PATCH"])
-@roles_required(RoleName.NGO)
+@cognito_required(require_pawconnect_user=True)
 def update_rescue_case_status(case_id: int):
     payload = request.get_json(silent=True)
     if payload is None:

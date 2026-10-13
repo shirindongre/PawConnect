@@ -30,7 +30,7 @@ def create_app(config_class=Config):
         )
 
     db.init_app(app)
-    # Enable foreign key constraints for SQLite and auto‑seed default roles
+    # Enable foreign key constraints for SQLite (applies to all SQLite connections)
     from sqlalchemy import event
     from sqlalchemy.engine import Engine
 
@@ -40,7 +40,8 @@ def create_app(config_class=Config):
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
 
-    if app.config.get('SQLALCHEMY_DATABASE_URI', '').startswith('sqlite'):
+    # Auto-create tables and seed default roles only in testing/development environments
+    if app.config.get("TESTING") and app.config.get('SQLALCHEMY_DATABASE_URI', '').startswith('sqlite'):
         with app.app_context():
             db.create_all()
             # Seed default roles if they don't exist

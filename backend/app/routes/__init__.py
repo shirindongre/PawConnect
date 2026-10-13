@@ -15,3 +15,4 @@ from .rescue_case_routes import rescue_bp
 api_bp.register_blueprint(user_bp)
 api_bp.register_blueprint(ngo_bp)
 api_bp.register_blueprint(animal_bp)
+api_bp.register_blueprint(rescue_bp)
