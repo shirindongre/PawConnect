@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PawConnect</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#home" aria-label="PawConnect home">🐾 PawConnect</a>
+      <nav aria-label="Main">
+        <ul class="nav-list" id="nav-list">
+          <li><a href="#home" data-nav="home">Home</a></li>
+          <li><a href="#adopt" data-nav="adopt">Adopt</a></li>
+          <li><a href="#report" data-nav="report">Report an Animal</a></li>
+          <li><a href="#cases" data-nav="cases">My Rescue Cases</a></li>
+          <li><a href="#profile" data-nav="profile">My Profile</a></li>
+        </ul>
+      </nav>
+      <div class="auth-box">
+        <span id="auth-status" class="auth-status" role="status">Not signed in</span>
+        <button type="button" id="auth-btn" class="btn btn-small">Add token</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+
+    <!-- HOME -->
+    <section id="view-home" class="view" hidden aria-labelledby="home-title">
+      <div class="hero">
+        <h1 id="home-title">Every animal deserves a safe home.</h1>
+        <p>PawConnect connects NGOs, rescuers and the public so animals can be found, reported and helped.</p>
+        <p class="hero-actions">
+          <a class="btn" href="#adopt">Browse animals</a>
+          <a class="btn btn-secondary" href="#report">Report an animal in need</a>
+        </p>
+      </div>
+      <h2>Featured animals</h2>
+      <div id="home-featured" class="state-host" aria-live="polite"></div>
+      <h2>Coming later</h2>
+      <p class="notice">Adoption applications, donations and volunteer applications are <strong>not yet available</strong> in PawConnect.</p>
+    </section>
+
+    <!-- ADOPT -->
+    <section id="view-adopt" class="view" hidden aria-labelledby="adopt-title">
+      <h1 id="adopt-title">Adopt / Browse Animals</h1>
+      <div class="filters">
+        <div class="field">
+          <label for="animal-search">Search this page</label>
+          <input id="animal-search" type="search" placeholder="Name, breed, location…" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="animal-species">Species</label>
+          <select id="animal-species"><option value="">All species</option></select>
+        </div>
+      </div>
+      <p id="adopt-hint" class="muted" hidden></p>
+      <div id="adopt-list" class="state-host" aria-live="polite"></div>
+      <nav id="adopt-pager" class="pager" aria-label="Animal pages" hidden>
+        <button type="button" class="btn btn-small" id="adopt-prev">← Previous</button>
+        <span id="adopt-page-label"></span>
+        <button type="button" class="btn btn-small" id="adopt-next">Next →</button>
+      </nav>
+    </section>
+
+    <!-- ANIMAL DETAIL -->
+    <section id="view-animal" class="view" hidden aria-labelledby="animal-title">
+      <p><a href="#adopt">← Back to animals</a></p>
+      <div id="animal-detail" class="state-host" aria-live="polite"></div>
+    </section>
+
+    <!-- REPORT -->
+    <section id="view-report" class="view" hidden aria-labelledby="report-title">
+      <h1 id="report-title">Report an Animal in Need</h1>
+      <p>Tell us where the animal is and what you can see. Only the location is required.</p>
+      <div id="report-auth" class="notice" hidden></div>
+      <form id="report-form" novalidate>
+        <div class="field">
+          <label for="r-location">Location <span class="req">(required)</span></label>
+          <input id="r-location" name="location" type="text" maxlength="255" aria-describedby="r-location-err" required>
+          <p class="err" id="r-location-err" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="r-animal_type">Animal type</label>
+          <input id="r-animal_type" name="animal_type" type="text" maxlength="100" placeholder="e.g. Dog, Cat, Cow" aria-describedby="r-animal_type-err">
+          <p class="err" id="r-animal_type-err" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="r-urgency">Urgency</label>
+          <select id="r-urgency" name="urgency" aria-describedby="r-urgency-err">
+            <option value="">Not specified</option>
+            <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+          </select>
+          <p class="err" id="r-urgency-err" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="r-condition">Condition</label>
+          <textarea id="r-condition" name="condition" rows="3" maxlength="2000" placeholder="Visible injuries or physical state" aria-describedby="r-condition-err"></textarea>
+          <p class="err" id="r-condition-err" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="r-description">Description</label>
+          <textarea id="r-description" name="description" rows="4" maxlength="2000" aria-describedby="r-description-err"></textarea>
+          <p class="err" id="r-description-err" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="r-image_url">Image URL</label>
+          <input id="r-image_url" name="image_url" type="url" maxlength="2048" placeholder="https://…" aria-describedby="r-image_url-err">
+          <p class="hint">Link to an existing image. File upload is not available yet.</p>
+          <p class="err" id="r-image_url-err" role="alert"></p>
+        </div>
+        <p id="report-result" role="status" aria-live="polite"></p>
+        <button type="submit" class="btn" id="report-submit">Submit report</button>
+      </form>
+    </section>
+
+    <!-- CASES -->
+    <section id="view-cases" class="view" hidden aria-labelledby="cases-title">
+      <h1 id="cases-title">My Rescue Cases</h1>
+      <div id="cases-list" class="state-host" aria-live="polite"></div>
+      <nav id="cases-pager" class="pager" aria-label="Case pages" hidden>
+        <button type="button" class="btn btn-small" id="cases-prev">← Previous</button>
+        <span id="cases-page-label"></span>
+        <button type="button" class="btn btn-small" id="cases-next">Next →</button>
+      </nav>
+    </section>
+
+    <!-- CASE DETAIL -->
+    <section id="view-case" class="view" hidden aria-labelledby="case-title">
+      <p><a href="#cases">← Back to my cases</a></p>
+      <div id="case-detail" class="state-host" aria-live="polite"></div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="view-profile" class="view" hidden aria-labelledby="profile-title">
+      <h1 id="profile-title">My Profile</h1>
+      <div id="profile-body" class="state-host" aria-live="polite"></div>
+    </section>
+
+  </main>
+
+  <!-- Token dialog -->
+  <dialog id="auth-dialog" aria-labelledby="auth-dialog-title">
+    <form method="dialog" id="auth-form">
+      <h2 id="auth-dialog-title">Sign-in token</h2>
+      <p>PawConnect has no sign-in screen in this frontend yet. Protected pages need an Amazon Cognito <strong>ID or access token</strong> that you obtained from your own Cognito sign-in. The backend verifies it on every request.</p>
+      <p class="muted">The token is kept in memory only. It is lost when you reload the page.</p>
+      <div class="field">
+        <label for="auth-token">Cognito token</label>
+        <textarea id="auth-token" rows="4" autocomplete="off" spellcheck="false"></textarea>
+      </div>
+      <div class="dialog-actions">
+        <button type="submit" value="save" class="btn">Use token</button>
+        <button type="button" id="auth-clear" class="btn btn-secondary">Sign out</button>
+        <button type="submit" value="cancel" class="btn btn-secondary">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="site-footer"><div class="wrap">PawConnect · frontend is a thin presentation layer; all rules are enforced by the backend.</div></footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

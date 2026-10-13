@@ -1,5 +1,6 @@
 from pathlib import Path
 from flask import Flask
+import os
 from dotenv import load_dotenv
 
 from .extensions import db, migrate
@@ -23,10 +24,10 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Validate that database configuration is present
-    if not app.config.get("SQLALCHEMY_DATABASE_URI"):
-        raise ValueError(
-            "DATABASE_URL is not set. Please ensure it is defined in backend/.env or your environment."
+    # Validate that DATABASE_URL is set in production environment
+    if os.getenv("APP_ENV") == "production" and not os.getenv("DATABASE_URL"):
+        raise RuntimeError(
+            "DATABASE_URL must be set in production environment."
         )
 
     db.init_app(app)
@@ -66,6 +67,21 @@ def create_app(config_class=Config):
 
     from .routes import api_bp
     app.register_blueprint(api_bp)
+
+    # ---- CORS configuration ----
+    # Enable CORS only when FRONTEND_ORIGIN env var is defined.
+    # Local development uses the dev_server proxy, so no CORS needed.
+    frontend_origins = os.getenv("FRONTEND_ORIGIN")
+    if frontend_origins:
+        origins = [o.strip() for o in frontend_origins.split(",") if o.strip()]
+        try:
+            from flask_cors import CORS
+        except ImportError as e:
+            raise ImportError(
+                "Flask-CORS is required for CORS support. Add it to backend/requirements.txt and reinstall."
+            ) from e
+        CORS(app, resources={r"/api/*": {"origins": origins}})
+    # End of CORS block
 
     @app.get("/api/health")
     def health_check():
